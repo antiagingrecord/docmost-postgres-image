@@ -7,7 +7,9 @@ WORKDIR /build
 ARG PGBIGM_REF=v1.2-20250903
 RUN git clone --depth 1 --branch "${PGBIGM_REF}" https://github.com/pgbigm/pg_bigm.git
 WORKDIR /build/pg_bigm
-RUN make USE_PGXS=1 CLANG=clang && make USE_PGXS=1 CLANG=clang install
+RUN LLVM_BINPATH=$(dirname "$(find /usr/lib/llvm*/bin -name llvm-lto | head -1)") \
+    && make USE_PGXS=1 CLANG=clang LLVM_BINPATH="$LLVM_BINPATH" \
+    && make USE_PGXS=1 CLANG=clang LLVM_BINPATH="$LLVM_BINPATH" install
 
 # ---- runtime stage ----
 FROM postgres:18-alpine
