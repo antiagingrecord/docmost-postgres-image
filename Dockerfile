@@ -1,14 +1,14 @@
 # ---- build stage ----
-FROM postgres:16-alpine AS build
-RUN apk add --no-cache build-base git postgresql16-dev clang19 llvm19
+FROM postgres:18-alpine AS build
+RUN apk add --no-cache build-base git postgresql18-dev clang llvm
 WORKDIR /build
-ARG PGBIGM_REF=v1.2-20240606
+ARG PGBIGM_REF=v1.2-20250903
 RUN git clone --depth 1 --branch "${PGBIGM_REF}" https://github.com/pgbigm/pg_bigm.git
 WORKDIR /build/pg_bigm
 RUN make USE_PGXS=1 && make USE_PGXS=1 install
 
 # ---- runtime stage ----
-FROM postgres:16-alpine
+FROM postgres:18-alpine
 # 必要な成果物だけコピー
 COPY --from=build /usr/local/lib/postgresql/pg_bigm.so \
                   /usr/local/lib/postgresql/pg_bigm.so
