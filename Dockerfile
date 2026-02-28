@@ -1,9 +1,7 @@
 # ---- build stage ----
 FROM postgres:18-alpine AS build
 
-# postgresql18-dev は入れない（imageに既に /usr/local/bin/pg_config がある）
-# clang/llvm はバージョン固定しない（Alpine 3.22 の提供バージョンに合わせる）
-RUN apk add --no-cache build-base git clang llvm
+RUN apk add --no-cache build-base git clang llvm icu-dev
 
 WORKDIR /build
 ARG PGBIGM_REF=v1.2-20250903
